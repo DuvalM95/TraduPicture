@@ -27,7 +27,7 @@ def procesar():
         prompt = """
 Eres un asistente experto en inglés. Observa la imagen, extrae el texto del ejercicio, tradúcelo al español si es necesario, 
 rellena los espacios en blanco y, si hay opciones múltiples, elige la letra correcta (a, b, c...).
-Responde de forma clara y directa.
+Responde de forma clara y directa, ademas si el texto esta en español que haga lo contrario osea que traduzca de ingles a español.
         """
 
         # Usa el modelo actualizado gpt-4o
