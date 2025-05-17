@@ -2,11 +2,12 @@ from flask import Flask, request, jsonify, render_template
 import openai
 from flask_cors import CORS
 import base64
+import os
 
 app = Flask(__name__)
 CORS(app)
 
-OPENAI_API_KEY = "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"
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 openai.api_key = OPENAI_API_KEY
 
 @app.route("/")
