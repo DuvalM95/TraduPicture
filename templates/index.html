@@ -96,7 +96,15 @@
       .then(res => res.json())
       .then(data => {
         if (data.resultado) {
-          respuesta.innerHTML = `<span class="text-green-600">${data.resultado}</span>`;
+          // Divide por líneas y resalta en negrita solo las que parecen respuesta
+          const partes = data.resultado.split(/\n+/).filter(Boolean);
+          respuesta.innerHTML = partes.map(txt => {
+            // Si la línea empieza con número, letra, guion o "Respuesta", ponla en negrita
+            if (/^(\d+\.|[a-zA-Z]\)|-|Respuesta:)/.test(txt.trim())) {
+              return `<p class="font-bold mb-2">${txt}</p>`;
+            }
+            return `<p class="mb-2">${txt}</p>`;
+          }).join('');
         } else if (data.error) {
           respuesta.innerHTML = `<span class="text-red-600">❌ ${data.error}</span>`;
         } else {
