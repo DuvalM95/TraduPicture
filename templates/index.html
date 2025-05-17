@@ -119,28 +119,35 @@
 
     abrirCamaraBtn.addEventListener('click', async function () {
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        video.classList.remove('hidden');
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        video.srcObject = stream;
+        try {
+          video.classList.remove('hidden');
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { exact: "environment" } }
+          });
+          video.srcObject = stream;
 
-        video.addEventListener('click', function capturar() {
-          canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-          canvas.classList.remove('hidden');
-          // Detener la cámara
-          stream.getTracks().forEach(track => track.stop());
-          video.classList.add('hidden');
-          // Convertir la imagen a archivo y ponerla en el input
-          canvas.toBlob(blob => {
-            const file = new File([blob], "foto.jpg", { type: "image/jpeg" });
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            imagenInput.files = dataTransfer.files;
-            preview.src = URL.createObjectURL(blob);
-            preview.classList.remove('hidden');
-          }, "image/jpeg");
-          video.removeEventListener('click', capturar);
-        });
-        alert("Haz clic en el video para tomar la foto.");
+          video.addEventListener('click', function capturar() {
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            canvas.classList.remove('hidden');
+            stream.getTracks().forEach(track => track.stop());
+            video.classList.add('hidden');
+            canvas.toBlob(blob => {
+              const file = new File([blob], "foto.jpg", { type: "image/jpeg" });
+              const dataTransfer = new DataTransfer();
+              dataTransfer.items.add(file);
+              imagenInput.files = dataTransfer.files;
+              preview.src = URL.createObjectURL(blob);
+              preview.classList.remove('hidden');
+            }, "image/jpeg");
+            video.removeEventListener('click', capturar);
+          });
+          alert("Haz clic en el video para tomar la foto.");
+        } catch (err) {
+          alert("No se pudo acceder a la cámara trasera. Se usará la cámara por defecto.");
+          // fallback a cámara por defecto
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          video.srcObject = stream;
+        }
       } else {
         alert("Tu navegador no soporta acceso a la cámara.");
       }
